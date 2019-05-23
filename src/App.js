@@ -1,24 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useReducer, useEffect } from 'react';
 import './App.css';
 
+import InputForm from './InputForm';
+import templateReducer from './templateReducer';
+import { fetchRandomText } from './util';
+
+const initState = [];
 function App() {
+  const [templateStr, dispatch] = useReducer(templateReducer, initState);
+  useEffect(() => {
+    fetchRandomText(dispatch);
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <div className='App'>
+      <InputForm dispatch={dispatch} />
+      {templateStr.map(({ text, highlight }, i) => (
+        <div
+          key={Math.random()}
+          onClick={() => dispatch({ type: 'HIGHLIGHT', text })}
+          style={{ color: highlight ? 'red' : '', float: 'left' }}
         >
-          Learn React
-        </a>
-      </header>
+          &nbsp;&nbsp;
+          {text}
+        </div>
+      ))}
     </div>
   );
 }
